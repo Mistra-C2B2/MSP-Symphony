@@ -1,0 +1,8 @@
+{
+  "name": "symphony-dev",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/workspace/MSP-Symphony",
+  "forwardPorts": [4200, 8080],
+  "postCreateCommand": "npm ci --prefix frontend"
+}

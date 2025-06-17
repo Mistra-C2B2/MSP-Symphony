@@ -97,6 +97,11 @@ ng build
 The build artifacts will end up in the `frontend/dist` directory.
 
 For frontend development there is also the Angular CLI development server, see the frontend README for more details. 
+### Docker Compose
+
+A `docker-compose.yml` file allows running the database, backend and frontend using containers.
+Run `docker-compose up --build` and access the services on ports 8080 and 4200.
+
 
 ## Configuration and Deployment
 

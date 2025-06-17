@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: symphony
+      POSTGRES_PASSWORD: symphony
+      POSTGRES_DB: symphony
+    ports:
+      - '5432:5432'
+  backend:
+    build: ./symphony-ws
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: symphony
+      DB_USER: symphony
+      DB_PASS: symphony
+    ports:
+      - '8080:8080'
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - '4200:80'
