@@ -1,15 +1,15 @@
-version: '3'
+version: "3"
 services:
   dev:
     build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     volumes:
-      - ..:/workspace:cached
-    command: sleep infinity
+      - ..:/workspace:cached,consistency=cached
+      - ~/.gitconfig:/root/.gitconfig
     ports:
-      - '4200:4200'
-      - '8080:8080'
+      - "4200:4200"
+      - "8080:8080"
     depends_on:
       - db
   db:
@@ -19,4 +19,4 @@ services:
       POSTGRES_USER: symphony
       POSTGRES_PASSWORD: symphony
     ports:
-      - '5432:5432'
+      - "5432:5432"

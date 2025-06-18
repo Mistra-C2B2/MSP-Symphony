@@ -1,8 +1,29 @@
 {
   "name": "symphony-dev",
+  // "build": {
+  //   "dockerfile": "Dockerfile",
+  //   "context": "."
+  // },
   "dockerComposeFile": "docker-compose.yml",
   "service": "dev",
-  "workspaceFolder": "/workspace/MSP-Symphony",
-  "forwardPorts": [4200, 8080],
-  "postCreateCommand": "npm ci --prefix frontend"
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "angular.ng-template",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "java.compile.nullAnalysis.mode": "automatic"
+      }
+    }
+  },
+  "forwardPorts": [4200, 8080, 5432],
+  "postCreateCommand": "echo DONE",
+  "overrideCommand": false,
+  "remoteUser": "root"
 }
