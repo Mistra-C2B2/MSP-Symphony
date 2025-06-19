@@ -5,8 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ..:/workspace:cached,consistency=cached
+      - ..:/workspace:cached
       - ~/.gitconfig:/root/.gitconfig
+    command: sleep infinity
     ports:
       - "4200:4200"
       - "8080:8080"

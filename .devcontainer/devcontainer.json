@@ -23,7 +23,6 @@
     }
   },
   "forwardPorts": [4200, 8080, 5432],
-  "postCreateCommand": "echo DONE",
   "overrideCommand": false,
   "remoteUser": "root"
 }
