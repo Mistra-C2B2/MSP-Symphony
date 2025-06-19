@@ -13,7 +13,7 @@ services:
     depends_on:
       - db
   db:
-    image: postgres:14
+    image: postgis/postgis:17-3.5
     environment:
       POSTGRES_DB: symphony
       POSTGRES_USER: symphony
