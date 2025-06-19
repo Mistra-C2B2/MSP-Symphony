@@ -11,7 +11,7 @@ ENV MAVEN_VERSION=3.9.9 \
     DB_PASS=password
 
 RUN apt-get update \
-    && apt-get install -y curl wget unzip gnupg ca-certificates \
+    && apt-get install -y curl wget unzip gnupg iputils-ping ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Maven 3.9.9
