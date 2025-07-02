@@ -1,29 +1,28 @@
 > [!CAUTION]
-> Regrettably, the instruction provided below is outdated, inaccurate and **will be removed**.  
-> Please be aware that major parts of it is incompatible with changes made to the database schema since this document 
+> Regrettably, the instructions provided below are outdated, inaccurate and **will be removed**.  
+> Please be aware that major parts of them are incompatible with changes made to the database schema since this document 
 > was authored.
 > 
 > A more robust method to aid with constructing a _Baseline_ from raw data sources is currently being developed.  
 > Apologies for any inconvenience.
 >
 > The CSV format described for metadata and matrix import is largely the same and files conforming to the description 
-> are conceivably usable, but instead of the steps and commands detailed in  _"MetadataImport.txt"_ and _"MatrixImport.txt"_ 
-> files, please utilize the supplied SQL scripts:
-> [MetadataImport.sql](scripts/MetadataImport.sql) and  [MatrixImport.sql](scripts/MatrixImport.sql).
+> are conceivably usable, but instead of the steps and commands detailed in the  _"MetadataImport.txt"_ and 
+> _"MatrixImport.txt"_ files, please utilize the supplied SQL scripts:
+> [MetadataImport.sql](scripts/MetadataImport.sql) and [MatrixImport.sql](scripts/MatrixImport.sql).
 > 
-> A key difference in the metadata import format is that not all columns given in the example must be provided. Or
-> better, most of the exemplified columns may be omitted, only relevant metadata entries for the raster set should 
-> be included.  
+> A key difference in the metadata import format is that most of the columns in the example may be omitted, only the 
+> relevant metadata entries for the raster set should be included.  
 > Since version [1.15](https://github.com/havochvatten/MSP-Symphony/releases/tag/v1.15.0) a metadata CSV can provide 
 > arbitrarily "titled" metadata entries (to be saved as text). The "mandatory" columns to include are  _Bandnumber_, 
 > _Title_, _Metadata Language_ and _Symphony Category_.  
 > _Symphony Theme_ is of particular significance to the default frontend application and should probably be included in
 >  most cases, but it's not strictly required for the script to work.
 >  Notably, the [MetadataImport.sql](scripts/MetadataImport.sql) script provides a way to map any string as column title 
->  to the mandatory columns as well.
+>  including the mandatory columns.
 >
 > However, the sections starting from [Import raster data](#import-raster-data), regarding preparing the data raster 
-> stack and the calibration procedure, may still be referred.
+> stack and the calibration procedure, may still be used as reference.
 
 # ~~Instructions for data import~~ _(deprecated)_
 
