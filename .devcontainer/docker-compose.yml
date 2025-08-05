@@ -9,8 +9,8 @@ services:
         DB_URL: //db:5432/symphony
     volumes:
       - ..:/workspace:cached
-      - ~/.gitconfig:/root/.gitconfig
-      - ~/.ssh:/root/.ssh:ro
+      - ~/.gitconfig:/home/vscode/.gitconfig
+      - ~/.ssh:/home/vscode/.ssh:ro
     ports:
       - "8080:8080"
       - "9990:9990"
