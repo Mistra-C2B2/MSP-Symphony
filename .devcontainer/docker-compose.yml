@@ -3,10 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        DB_USER: symphony
-        DB_PASSWORD: symphony
-        DB_URL: //db:5432/symphony
     volumes:
       - ..:/workspace:cached
       - ~/.gitconfig:/home/vscode/.gitconfig

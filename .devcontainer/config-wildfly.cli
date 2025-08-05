@@ -1,0 +1,24 @@
+batch
+
+# --- PostgreSQL JDBC driver registration
+module add \
+    --name=org.postgresql \
+    --resources=/opt/wildfly/modules/system/layers/base/org/postgresql/main/postgresql.jar \
+    --dependencies=javax.api,javax.transaction.api
+
+/subsystem=datasources/jdbc-driver=postgresql:add( \
+    driver-name=postgresql, \
+    driver-module-name=org.postgresql, \
+    driver-class-name=org.postgresql.Driver \
+)
+
+# --- SymphonyDS datasource configuration
+data-source add \
+    --name=SymphonyDS \
+    --jndi-name=java:/SymphonyDS \
+    --driver-name=postgresql \
+    --connection-url=jdbc:postgresql://db:5432/symphony \
+    --user-name=symphony \
+    --password=symphony
+
+run-batch
