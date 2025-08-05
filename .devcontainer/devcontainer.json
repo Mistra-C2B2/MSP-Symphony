@@ -18,7 +18,6 @@
       }
     }
   },
+  "remoteUser": "root",
   "overrideCommand": false
-
-  // "postStartCommand": "sh /opt/start-wildfly.sh"
 }

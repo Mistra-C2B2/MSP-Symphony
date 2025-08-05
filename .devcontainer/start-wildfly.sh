@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Creating a WildFly user..."
+# echo "Creating a WildFly user..."
 /opt/wildfly/bin/add-user.sh -u "admin" -p "password123!" -g "SuperUser" -r "ManagementRealm"
 
 echo "Starting WildFly configuration..."

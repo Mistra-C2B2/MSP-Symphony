@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-web>
-    <security-domain>other</security-domain>
     <context-root>/symphony-ws</context-root>
 </jboss-web>

@@ -5,8 +5,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ..:/workspace:cached
-      - ~/.gitconfig:/home/vscode/.gitconfig
-      - ~/.ssh:/home/vscode/.ssh:ro
+      - ~/.gitconfig:/root/.gitconfig
+      - ~/.ssh:/root/.ssh:ro
     ports:
       - "8080:8080"
       - "9990:9990"
