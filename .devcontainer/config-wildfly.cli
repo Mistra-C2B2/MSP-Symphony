@@ -21,4 +21,42 @@ data-source add \
     --user-name=symphony \
     --password=symphony
 
+# --- Create a role decoder that maps from the "Roles" attribute
+/subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
+
+# --- Create a filesystem realm to store users
+/subsystem=elytron/filesystem-realm=devFsRealm:add(path=demofs-realm-users,relative-to=jboss.server.config.dir)
+
+# --- Add user "frank" with password and GRP_SYMPHONY roles
+/subsystem=elytron/filesystem-realm=devFsRealm:add-identity(identity=frank)
+/subsystem=elytron/filesystem-realm=devFsRealm:set-password(identity=frank,clear={password="password123"})
+/subsystem=elytron/filesystem-realm=devFsRealm:add-identity-attribute(identity=frank,name=Roles,value=["GRP_SYMPHONY"])
+
+# --- Add admin user with GRP_SYMPHONY_ADMIN role
+/subsystem=elytron/filesystem-realm=devFsRealm:add-identity(identity=admin)
+/subsystem=elytron/filesystem-realm=devFsRealm:set-password(identity=admin,clear={password="admin123"})
+/subsystem=elytron/filesystem-realm=devFsRealm:add-identity-attribute(identity=admin,name=Roles,value=["GRP_SYMPHONY_ADMIN"])
+
+# --- Define the security domain based on this realm
+/subsystem=elytron/security-domain=fsSD:add( \
+    realms=[{realm=devFsRealm,role-decoder=from-roles-attribute}], \
+    default-realm=devFsRealm, \
+    permission-mapper=default-permission-mapper \
+)
+
+# --- Define the HTTP authentication factory with BASIC
+/subsystem=elytron/http-authentication-factory=fs-http-auth-factory:add( \
+    http-server-mechanism-factory=global, \
+    security-domain=fsSD, \
+    mechanism-configurations=[{ \
+        mechanism-name=BASIC, \
+        mechanism-realm-configurations=[{realm-name=RealmUsersRoles}] \
+    }]
+)
+
+# --- Bind it to Undertow under a named security domain
+/subsystem=undertow/application-security-domain=FSSecurityDomain:add( \
+    http-authentication-factory=fs-http-auth-factory \
+)
+
 run-batch
