@@ -1,6 +1,6 @@
 {
   "name": "symphony-dev",
-  "dockerComposeFile": "docker-compose.dev.yml",
+  "dockerComposeFile": "docker-compose.yml",
   "service": "dev",
   "workspaceFolder": "/workspace",
   "customizations": {
@@ -19,6 +19,6 @@
     }
   },
   "overrideCommand": false
-  
+
   // "postStartCommand": "sh /opt/start-wildfly.sh"
 }

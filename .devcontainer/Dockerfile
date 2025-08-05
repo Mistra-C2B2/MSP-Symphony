@@ -59,9 +59,6 @@ RUN printf '%s\n' \
     > /opt/config-wildfly.cli
 
 
-
-# RUN /opt/wildfly/bin/jboss-cli.sh --file=/opt/postgresql-driver-registration.cli
-
 # RUN printf '%s\n' \
 #     'batch' \
 #     '# --- PostgreSQL driver registration' \
@@ -96,8 +93,6 @@ EXPOSE 8080 9990
 
 # Copy and make the startup script executable
 COPY start-wildfly.sh /opt/start-wildfly.sh
-RUN chmod a+x /opt/start-wildfly.sh
+RUN chmod +x /opt/start-wildfly.sh
 
 CMD ["/opt/start-wildfly.sh"] 
-#CMD ["/bin/bash", "-c"]
-

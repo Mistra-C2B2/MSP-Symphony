@@ -1,0 +1,26 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DB_USER: symphony
+        DB_PASSWORD: symphony
+        DB_URL: //db:5432/symphony
+    volumes:
+      - ..:/workspace:cached
+      - ~/.gitconfig:/root/.gitconfig
+      - ~/.ssh:/root/.ssh:ro
+    ports:
+      - "8080:8080"
+      - "9990:9990"
+    depends_on:
+      - db
+  db:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_DB: symphony
+      POSTGRES_USER: symphony
+      POSTGRES_PASSWORD: symphony
+    ports:
+      - "5432:5432"
