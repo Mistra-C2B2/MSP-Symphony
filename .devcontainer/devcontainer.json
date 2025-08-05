@@ -1,10 +1,6 @@
 {
   "name": "symphony-dev",
-  // "build": {
-  //   "dockerfile": "Dockerfile",
-  //   "context": "."
-  // },
-  "dockerComposeFile": "docker-compose.yml",
+  "dockerComposeFile": "docker-compose.dev.yml",
   "service": "dev",
   "workspaceFolder": "/workspace",
   "customizations": {
@@ -22,7 +18,7 @@
       }
     }
   },
-  "forwardPorts": [4200, 8080, 5432],
-  "overrideCommand": false,
-  "remoteUser": "root"
+  "overrideCommand": false
+  
+  // "postStartCommand": "sh /opt/start-wildfly.sh"
 }

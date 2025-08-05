@@ -6,15 +6,19 @@
 
 /opt/wildfly/bin/add-user.sh -u "admin" -p "password123!" -g "SuperUser" -r "ManagementRealm"
 
-## Start Wildfly server
+## Start Wildfly server 
 
 /opt/wildfly/bin/standalone.sh -c standalone-full.xml
+
+## Open the web admin console
+
+visit http://localhost:9990
 
 ## Start the CLI
 
 /opt/wildfly/bin/jboss-cli.sh --connect
 
-### Add the JDBC driver
+### Add the JDBC driver 
 
 module add --name=org.postgresql --resources=/opt/wildfly/modules/system/layers/base/org/postgresql/main/postgresql.jar --dependencies=javax.api,javax.transaction.api
 
