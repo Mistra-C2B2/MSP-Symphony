@@ -59,6 +59,11 @@ data-source add \
     http-authentication-factory=fs-http-auth-factory \
 )
 
-reload
+# Map EJBs referencing <security-domain>SymphonySecurityDomain</security-domain>
+/subsystem=ejb3/application-security-domain=SymphonySecurityDomain:add( \
+    security-domain=fsSD \
+)
 
+reload
+ 
 run-batch

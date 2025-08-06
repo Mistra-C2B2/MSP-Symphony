@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/devcontainers/java:0-17
 
 # Set environment variables
 ENV MAVEN_VERSION=3.9.9 \
-    WILDFLY_VERSION=36.0.1.Final \
+    WILDFLY_VERSION=36.0.0.Final \
     POSTGRES_DRIVER_VERSION=42.5.1 
 
 RUN apt-get update \

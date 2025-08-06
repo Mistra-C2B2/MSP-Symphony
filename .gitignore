@@ -22,3 +22,5 @@ target
 .history/*
 *.code-workspace
 *.war
+
+.env
