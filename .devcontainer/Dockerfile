@@ -42,11 +42,12 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Expose ports
 EXPOSE 8080 9990 4200
 
-# Copy the WildFly configuration script
-COPY config-wildfly.cli /opt/config-wildfly.cli
+# # Copy the WildFly configuration script
+# COPY ../config-wildfly.cli /opt/config-wildfly.cli
 
-# Copy and make the startup script executable
-COPY start-wildfly.sh /opt/start-wildfly.sh
-RUN chmod +x /opt/start-wildfly.sh
+# # Copy and make the startup script executable
+# COPY ../../start-wildfly.sh /opt/start-wildfly.sh
+# RUN chmod +x /opt/start-wildfly.sh
 
-CMD ["/opt/start-wildfly.sh"] 
+#CMD ["/opt/start-wildfly.sh"] 
+CMD ["/bin/bash","-c","sleep infinity"]

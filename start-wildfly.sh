@@ -18,7 +18,7 @@ done
 
 # Apply configuration
 echo "Applying WildFly configuration..."
-/opt/wildfly/bin/jboss-cli.sh --connect --file=/opt/config-wildfly.cli
+/opt/wildfly/bin/jboss-cli.sh --connect --file=config-wildfly.cli
 
 # Keep WildFly running in foreground
 tail -f /opt/wildfly/standalone/log/server.log
