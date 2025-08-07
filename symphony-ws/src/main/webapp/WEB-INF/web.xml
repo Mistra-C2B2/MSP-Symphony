@@ -9,10 +9,10 @@
         <param-value>format</param-value>
     </context-param>
 
-    <login-config>
+     <login-config>
         <auth-method>BASIC</auth-method>
     </login-config>
-
+ 
     <security-role>
         <description>Group Symphony</description>
         <role-name>GRP_SYMPHONY</role-name>

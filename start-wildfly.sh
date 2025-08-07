@@ -7,7 +7,7 @@ set -e
 echo "Starting WildFly configuration..."
 
 # Start WildFly in background
-/opt/wildfly/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 -bmanagement 0.0.0.0 &
+/opt/wildfly/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 -bmanagement 0.0.0.0 > /workspace/wildfly.log 2>&1 &
 
 # Wait for WildFly to be ready
 until /opt/wildfly/bin/jboss-cli.sh --connect --commands=":read-attribute(name=server-state)" >/dev/null 2>&1
@@ -17,8 +17,10 @@ do
 done
 
 # Apply configuration
-echo "Applying WildFly configuration..."
+echo "Applying WildFly DataSource configuration..."
 /opt/wildfly/bin/jboss-cli.sh --connect --file=config-wildfly.cli
+echo "Applying WildFly Security configuration..."
+/opt/wildfly/bin/jboss-cli.sh --connect --file=config-wildfly-ldap.cli
 
 # Keep WildFly running in foreground
-tail -f /opt/wildfly/standalone/log/server.log
+tail -f /workspace/wildfly.log

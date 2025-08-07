@@ -13,6 +13,7 @@ services:
       - "4200:4200"
     depends_on:
       - db
+      - ldap
   db:
     image: postgis/postgis:17-3.5
     environment:
@@ -21,3 +22,23 @@ services:
       POSTGRES_PASSWORD: symphony
     ports:
       - "5432:5432"
+
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: dev-ldap
+    environment:
+      LDAP_ORGANISATION: "Example Org"
+      LDAP_DOMAIN: "example.org"
+      LDAP_ADMIN_PASSWORD: "admin"
+    command: --copy-service
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ldap-data:/var/lib/ldap
+      - ldap-config:/etc/ldap/slapd.d
+      - ./ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
+
+volumes:
+  ldap-data:
+  ldap-config:

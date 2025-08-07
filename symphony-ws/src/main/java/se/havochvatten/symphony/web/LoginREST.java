@@ -10,17 +10,19 @@ import se.havochvatten.symphony.dto.UserLoginDto;
 import se.havochvatten.symphony.exception.SymphonyModelErrorCode;
 import se.havochvatten.symphony.service.PropertiesService;
 import se.havochvatten.symphony.service.UserService;
-
+import jakarta.annotation.security.PermitAll;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Map;
 
 @Stateless
 @Path("/")
@@ -34,41 +36,90 @@ public class LoginREST {
     @EJB
     UserService userService;
 
-    @SuppressWarnings("rawtypes")
-    @Operation(summary = "Login to application")
+    // @SuppressWarnings("rawtypes")
+    // @Operation(summary = "Login to application")
+    // @POST
+    // @Path("/login")
+    // @Consumes(MediaType.APPLICATION_JSON)
+    // @Produces(MediaType.APPLICATION_JSON)
+    // public Response login(@Context HttpServletRequest req, UserLoginDto user) {
+    //     Principal thePrincipal = req.getUserPrincipal();
+
+    //     // Only login if not already logged in...
+    //     if (thePrincipal == null || !thePrincipal.getName().equals(user.getUsername())) {
+    //         try {
+    //             if (thePrincipal != null) {
+    //                 logout(req);
+    //             }
+    //             return loginUser(req, user);
+    //         } catch (ServletException e) {
+    //             LOG.info("User {} failed to login with error: {}", user.getUsername(), e.getMessage());
+    //             LOG.debug("Login failure", e);
+    //             return Response.status(Response.Status.UNAUTHORIZED).entity(new FrontendErrorDto(SymphonyModelErrorCode.LOGIN_FAILED_ERROR.getErrorKey(), SymphonyModelErrorCode.LOGIN_FAILED_ERROR.getErrorMessage())).build();
+    //         } catch (IOException e) {
+    //             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new FrontendErrorDto(SymphonyModelErrorCode.OTHER_ERROR.getErrorKey(), SymphonyModelErrorCode.OTHER_ERROR.getErrorMessage())).build();
+    //         }
+    //     } else {
+    //         LOG.debug("User {} was already logged in. Creating new session.", user.getUsername());
+    //         try {
+    //             logout(req);
+    //             return loginUser(req, user);
+    //         } catch (ServletException e) {
+    //             LOG.info("User {} failed to logout with error: {}", user.getUsername(), e.getMessage());
+    //             LOG.debug("Logout failure", e);
+    //             return Response.status(Response.Status.UNAUTHORIZED).entity(new FrontendErrorDto(SymphonyModelErrorCode.OTHER_ERROR.getErrorKey(), SymphonyModelErrorCode.OTHER_ERROR.getErrorMessage())).build();
+    //         } catch (IOException e) {
+    //             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new FrontendErrorDto(SymphonyModelErrorCode.OTHER_ERROR.getErrorKey(), SymphonyModelErrorCode.OTHER_ERROR.getErrorMessage())).build();
+    //         }
+    //     }
+    // }
+
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @PermitAll              // allow unauthenticated users to reach this endpoint
     public Response login(@Context HttpServletRequest req, UserLoginDto user) {
-        Principal thePrincipal = req.getUserPrincipal();
+        try {
+            /* -----------------------------------------------------------
+            * 1. Create (or reuse) the HTTP session first -- this is the
+            *    single line that prevents Undertow from discarding the
+            *    SecurityIdentity at the end of the request.
+            * ----------------------------------------------------------- */
+            HttpSession session = req.getSession(true);
 
-        // Only login if not already logged in...
-        if (thePrincipal == null || !thePrincipal.getName().equals(user.getUsername())) {
-            try {
-                if (thePrincipal != null) {
-                    logout(req);
-                }
-                return loginUser(req, user);
-            } catch (ServletException e) {
-                LOG.info("User {} failed to login with error: {}", user.getUsername(), e.getMessage());
-                LOG.debug("Login failure", e);
-                return Response.status(Response.Status.UNAUTHORIZED).entity(new FrontendErrorDto(SymphonyModelErrorCode.LOGIN_FAILED_ERROR.getErrorKey(), SymphonyModelErrorCode.LOGIN_FAILED_ERROR.getErrorMessage())).build();
-            } catch (IOException e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new FrontendErrorDto(SymphonyModelErrorCode.OTHER_ERROR.getErrorKey(), SymphonyModelErrorCode.OTHER_ERROR.getErrorMessage())).build();
+            /* -----------------------------------------------------------
+            * 2. If someone is already logged in under a *different* name,
+            *    log them out and start with a fresh session.
+            * ----------------------------------------------------------- */
+            Principal p = req.getUserPrincipal();
+            if (p != null && !p.getName().equals(user.getUsername())) {
+                req.logout();          // drop the old identity
+                session.invalidate();  // mitigate fixation
+                session = req.getSession(true);
             }
-        } else {
-            LOG.debug("User {} was already logged in. Creating new session.", user.getUsername());
-            try {
-                logout(req);
-                return loginUser(req, user);
-            } catch (ServletException e) {
-                LOG.info("User {} failed to logout with error: {}", user.getUsername(), e.getMessage());
-                LOG.debug("Logout failure", e);
-                return Response.status(Response.Status.UNAUTHORIZED).entity(new FrontendErrorDto(SymphonyModelErrorCode.OTHER_ERROR.getErrorKey(), SymphonyModelErrorCode.OTHER_ERROR.getErrorMessage())).build();
-            } catch (IOException e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new FrontendErrorDto(SymphonyModelErrorCode.OTHER_ERROR.getErrorKey(), SymphonyModelErrorCode.OTHER_ERROR.getErrorMessage())).build();
-            }
+
+            /* -----------------------------------------------------------
+            * 3. Delegate authentication to Elytron / LDAP
+            * ----------------------------------------------------------- */
+            req.login(user.getUsername(), user.getPassword());
+
+            /* -----------------------------------------------------------
+            * 4. (Optional but recommended) rotate the session-id again
+            *    to protect against session-fixation attacks.
+            * ----------------------------------------------------------- */
+            req.changeSessionId();
+
+       
+            return Response.ok(Map.of("status","ok")).build();
+
+        } catch (ServletException ex) {
+            LOG.info("Login failed for {} – {}", user.getUsername(), ex.getMessage());
+            return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(new FrontendErrorDto(
+                                SymphonyModelErrorCode.LOGIN_FAILED_ERROR.getErrorKey(),
+                                SymphonyModelErrorCode.LOGIN_FAILED_ERROR.getErrorMessage()))
+                        .build();
         }
     }
 

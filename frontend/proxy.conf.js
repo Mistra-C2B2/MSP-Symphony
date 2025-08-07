@@ -3,7 +3,7 @@ const TARGETS_CONFIG = {
     host: 'https://myserver:8443',
   },
   local: {
-    host: 'https://127.0.0.1:8443',
+    host: 'http://127.0.0.1:8080',
   },
 };
 
