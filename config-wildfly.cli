@@ -1,69 +1,28 @@
 batch
 
-# --- PostgreSQL JDBC driver registration
+# --- Register PostgreSQL JDBC driver
 module add \
     --name=org.postgresql \
     --resources=/opt/wildfly/modules/system/layers/base/org/postgresql/main/postgresql.jar \
     --dependencies=javax.api,javax.transaction.api
 
+# --- Add JDBC driver 
 /subsystem=datasources/jdbc-driver=postgresql:add( \
     driver-name=postgresql, \
     driver-module-name=org.postgresql, \
     driver-class-name=org.postgresql.Driver \
 )
 
-# --- SymphonyDS datasource configuration
-data-source add \
-    --name=SymphonyDS \
-    --jndi-name=java:/SymphonyDS \
-    --driver-name=postgresql \
-    --connection-url=jdbc:postgresql://db:5432/symphony \
-    --user-name=symphony \
-    --password=symphony
-
-# --- Create a role decoder that maps from the "Roles" attribute
-/subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
-
-# --- Create a filesystem realm to store users
-/subsystem=elytron/filesystem-realm=fsRealm:add(path=fs-realm-users,relative-to=jboss.server.config.dir)
-
-# --- Add user "user" with password and GRP_SYMPHONY roles
-/subsystem=elytron/filesystem-realm=fsRealm:add-identity(identity=user)
-/subsystem=elytron/filesystem-realm=fsRealm:set-password(identity=user,clear={password="user"})
-/subsystem=elytron/filesystem-realm=fsRealm:add-identity-attribute(identity=user,name=Roles,value=["GRP_SYMPHONY"])
-
-# --- Add admin user "admin" with GRP_SYMPHONY_ADMIN role
-/subsystem=elytron/filesystem-realm=fsRealm:add-identity(identity=admin)
-/subsystem=elytron/filesystem-realm=fsRealm:set-password(identity=admin,clear={password="admin"})
-/subsystem=elytron/filesystem-realm=fsRealm:add-identity-attribute(identity=admin,name=Roles,value=["GRP_SYMPHONY_ADMIN"])
-
-# --- Define the security domain based on this realm
-/subsystem=elytron/security-domain=fsSD:add( \
-    realms=[{realm=fsRealm,role-decoder=from-roles-attribute}], \
-    default-realm=fsRealm, \
-    permission-mapper=default-permission-mapper \
+# --- Configure SymphonyDS datasource 
+/subsystem=datasources/data-source=SymphonyDS:add( \
+    jndi-name=java:/SymphonyDS, \
+    driver-name=postgresql, \
+    connection-url="jdbc:postgresql://db:5432/symphony", \
+    user-name=symphony, \
+    password=symphony, \
+    enabled=true \
 )
-
-# --- Define the HTTP authentication factory with BASIC
-/subsystem=elytron/http-authentication-factory=fs-http-auth-factory:add( \
-    http-server-mechanism-factory=global, \
-    security-domain=fsSD, \
-    mechanism-configurations=[{ \
-        mechanism-name=BASIC, \
-        mechanism-realm-configurations=[{realm-name=RealmUsersRoles}] \
-    }] \
-)
-
-# --- Bind it to Undertow under a named security domain
-/subsystem=undertow/application-security-domain=SymphonySecurityDomain:add( \
-    http-authentication-factory=fs-http-auth-factory \
-)
-
-# Map EJBs referencing <security-domain>SymphonySecurityDomain</security-domain>
-/subsystem=ejb3/application-security-domain=SymphonySecurityDomain:add( \
-    security-domain=fsSD \
-)
-
-reload
  
 run-batch
+
+reload
