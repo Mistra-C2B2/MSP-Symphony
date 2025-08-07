@@ -23,4 +23,4 @@ echo "Applying WildFly Security configuration..."
 /opt/wildfly/bin/jboss-cli.sh --connect --file=config-wildfly-ldap.cli
 
 # Keep WildFly running in foreground
-tail -f /workspace/wildfly.log
+tail -f /opt/wildfly/standalone/log/server.log

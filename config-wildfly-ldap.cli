@@ -36,8 +36,8 @@ batch
 /subsystem=undertow/application-security-domain=SymphonySecurity:add(security-domain=SymphonySecurityDomain)
 
 # Add an EJB 3 application-security-domain mapping
-/subsystem=ejb3/application-security-domain=SymphonySecurity:add(
-    security-domain=SymphonySecurityDomain
+/subsystem=ejb3/application-security-domain=SymphonySecurity:add( \
+    security-domain=SymphonySecurityDomain \
 )
 
 # Set DEBUG log level for Elytron core

@@ -40,7 +40,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && rm -rf /var/lib/apt/lists/*
 
 # Expose ports
-EXPOSE 8080 9990 4200 8443
+EXPOSE 8080 9990 4200
 
 # # Copy the WildFly configuration script
 # COPY ../config-wildfly.cli /opt/config-wildfly.cli

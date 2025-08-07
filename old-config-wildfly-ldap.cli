@@ -25,20 +25,16 @@ batch
 /subsystem=elytron/mapped-role-mapper=from-mapped-roles:add(role-map=[{from="Admin", to=["GRP_SYMPHONY_ADMIN"]}, {from="User", to=["GRP_SYMPHONY"]}])
 
 # Create the Elytron Security Domain
-/subsystem=elytron/security-domain=SymphonySecurityDomain:add( 
-default-realm=LdapRealm, 
-realms=[{realm=LdapRealm, role-decoder=from-roles-attribute, role-mapper=from-mapped-roles}], 
-permission-mapper=default-permission-mapper 
+/subsystem=elytron/security-domain=SymphonySecurityDomain:add( \
+    default-realm=LdapRealm, \
+    realms=[{realm=LdapRealm, role-decoder=from-roles-attribute, role-mapper=from-mapped-roles}], \
+    permission-mapper=default-permission-mapper \
 )
 
 # Create the HTTP authentication factory for FORM-based login
 /subsystem=elytron/http-authentication-factory=LdapHttpAuthFactory:add( \
     http-server-mechanism-factory=global, \
-    security-domain=SymphonySecurityDomain, \
-    mechanism-configurations=[{ \
-        mechanism-name=BASIC, \
-        mechanism-realm-configurations=[{realm-name=LdapRealm}] \
-    }] \
+    security-domain=SymphonySecurityDomain \
 )
 
 # Bind the authentication factory to Undertow via an application security domain

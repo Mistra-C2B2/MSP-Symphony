@@ -1,7 +1,6 @@
 batch
 
 # --- PostgreSQL JDBC driver registration
-# This command is not easily made idempotent, but is generally safe to re-run.
 module add \
     --name=org.postgresql \
     --resources=/opt/wildfly/modules/system/layers/base/org/postgresql/main/postgresql.jar \
@@ -29,74 +28,72 @@ if (outcome != success) of /subsystem=datasources/data-source=SymphonyDS:read-re
     )
 end-if
 
-# # --- Create a role decoder that maps from the "Roles" attribute
-# if (outcome != success) of /subsystem=elytron/simple-role-decoder=from-roles-attribute:read-resource
-#     /subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
-# end-if
-# 
-# # --- Create a filesystem realm to store users
-# if (outcome != success) of /subsystem=elytron/filesystem-realm=fsRealm:read-resource
-#     /subsystem=elytron/filesystem-realm=fsRealm:add(path=fs-realm-users,relative-to=jboss.server.config.dir)
-# end-if
-# 
-# # --- Add/update user "user" with password and GRP_SYMPHONY roles
-# if (outcome == success) of /subsystem=elytron/filesystem-realm=fsRealm:read-identity(identity=user) 
-#     /subsystem=elytron/filesystem-realm=fsRealm:remove-identity(identity=user)
-# end-if
-# /subsystem=elytron/filesystem-realm=fsRealm:add-identity(identity=user)
-# /subsystem=elytron/filesystem-realm=fsRealm:set-password(identity=user,clear={password="user"})
-# /subsystem=elytron/filesystem-realm=fsRealm:add-identity-attribute(identity=user,name=Roles,value=["GRP_SYMPHONY"])
-# 
-# # --- Add/update admin user "admin" with GRP_SYMPHONY_ADMIN role
-# if (outcome == success) of /subsystem=elytron/filesystem-realm=fsRealm:read-identity(identity=admin)
-#     /subsystem=elytron/filesystem-realm=fsRealm:remove-identity(identity=admin)
-# end-if
-# /subsystem=elytron/filesystem-realm=fsRealm:add-identity(identity=admin)
-# /subsystem=elytron/filesystem-realm=fsRealm:set-password(identity=admin,clear={password="admin"})
-# /subsystem=elytron/filesystem-realm=fsRealm:add-identity-attribute(identity=admin,name=Roles,value=["GRP_SYMPHONY_ADMIN"])
-# 
-# # --- Define the security domain based on this realm
-# if (outcome != success) of /subsystem=elytron/security-domain=fsSD:read-resource
-#     /subsystem=elytron/security-domain=fsSD:add( \
-#         realms=[{realm=fsRealm,role-decoder=from-roles-attribute}], \
-#         default-realm=fsRealm, \
-#         permission-mapper=default-permission-mapper \
-#     )
-# end-if
-# 
-# # --- Define the HTTP authentication factory with BASIC
-# if (outcome != success) of /subsystem=elytron/http-authentication-factory=fs-http-auth-factory:read-resource
-#     /subsystem=elytron/http-authentication-factory=fs-http-auth-factory:add( \
-#         http-server-mechanism-factory=global, \
-#         security-domain=fsSD, \
-#         mechanism-configurations=[{ \
-#             mechanism-name=BASIC, \
-#             mechanism-realm-configurations=[{realm-name=RealmUsersRoles}]},{mechanism-name=BEARER_TOKEN}] \
-#     )
-# end-if
+# --- Create a role decoder that maps from the "Roles" attribute
+if (outcome != success) of /subsystem=elytron/simple-role-decoder=from-roles-attribute:read-resource
+    /subsystem=elytron/simple-role-decoder=from-roles-attribute:add(attribute=Roles)
+end-if
 
-# /subsystem=elytron/http-authentication-factory=fs-http-auth-factory:add( \
-#     http-server-mechanism-factory=global, \
-#     security-domain=fsSD, \
-#     mechanism-configurations=[{ \
-#         mechanism-name=ANONYMOUS \
-#     }] \
-# )
+# --- Create a filesystem realm to store users
+if (outcome != success) of /subsystem=elytron/filesystem-realm=fsRealm:read-resource
+    /subsystem=elytron/filesystem-realm=fsRealm:add(path=fs-realm-users,relative-to=jboss.server.config.dir)
+end-if
 
-# # --- Bind it to Undertow under a named security domain
-# if (outcome != success) of /subsystem=undertow/application-security-domain=SymphonySecurityDomain:read-resource
-#     /subsystem=undertow/application-security-domain=SymphonySecurityDomain:add( \
-#         http-authentication-factory=fs-http-auth-factory \
-#     )
-# end-if
-# 
-# 
-# # Map EJBs referencing <security-domain>SymphonySecurityDomain</security-domain>
-# if (outcome != success) of /subsystem=ejb3/application-security-domain=SymphonySecurityDomain:read-resource
-#     /subsystem=ejb3/application-security-domain=SymphonySecurityDomain:add( \
-#         security-domain=fsSD \
-#     )
-# end-if
+# --- Add/update user "user" with password and GRP_SYMPHONY roles
+if (outcome == success) of /subsystem=elytron/filesystem-realm=fsRealm:read-identity(identity=user) 
+    /subsystem=elytron/filesystem-realm=fsRealm:remove-identity(identity=user)
+end-if
+/subsystem=elytron/filesystem-realm=fsRealm:add-identity(identity=user)
+/subsystem=elytron/filesystem-realm=fsRealm:set-password(identity=user,clear={password="user"})
+/subsystem=elytron/filesystem-realm=fsRealm:add-identity-attribute(identity=user,name=Roles,value=["GRP_SYMPHONY"])
+
+# --- Add/update admin user "admin" with GRP_SYMPHONY_ADMIN role
+if (outcome == success) of /subsystem=elytron/filesystem-realm=fsRealm:read-identity(identity=admin)
+    /subsystem=elytron/filesystem-realm=fsRealm:remove-identity(identity=admin)
+end-if
+/subsystem=elytron/filesystem-realm=fsRealm:add-identity(identity=admin)
+/subsystem=elytron/filesystem-realm=fsRealm:set-password(identity=admin,clear={password="admin"})
+/subsystem=elytron/filesystem-realm=fsRealm:add-identity-attribute(identity=admin,name=Roles,value=["GRP_SYMPHONY_ADMIN"])
+
+# --- Define the security domain based on this realm
+if (outcome != success) of /subsystem=elytron/security-domain=fsSD:read-resource
+    /subsystem=elytron/security-domain=fsSD:add( \
+        realms=[{realm=fsRealm,role-decoder=from-roles-attribute}], \
+        default-realm=fsRealm, \
+        permission-mapper=default-permission-mapper \
+    )
+end-if
+
+# --- Define the HTTP authentication factory with BASIC
+if (outcome != success) of /subsystem=elytron/http-authentication-factory=fs-http-auth-factory:read-resource
+    /subsystem=elytron/http-authentication-factory=fs-http-auth-factory:add( \
+        http-server-mechanism-factory=global, \
+        security-domain=fsSD, \
+        mechanism-configurations=[{ \
+            mechanism-name=BASIC, \
+            mechanism-realm-configurations=[{realm-name=RealmUsersRoles}]},{mechanism-name=BEARER_TOKEN}] \
+    )
+end-i
+/subsystem=elytron/http-authentication-factory=fs-http-auth-factory:add( \
+    http-server-mechanism-factory=global, \
+    security-domain=fsSD, \
+    mechanism-configurations=[{ \
+        mechanism-name=ANONYMOUS \
+    }] \
+
+# --- Bind it to Undertow under a named security domain
+if (outcome != success) of /subsystem=undertow/application-security-domain=SymphonySecurityDomain:read-resource
+    /subsystem=undertow/application-security-domain=SymphonySecurityDomain:add( \
+        http-authentication-factory=fs-http-auth-factory \
+    )
+end-if
+
+
+# Map EJBs referencing <security-domain>SymphonySecurityDomain</security-domain>
+if (outcome != success) of /subsystem=ejb3/application-security-domain=SymphonySecurityDomain:read-resource
+    /subsystem=ejb3/application-security-domain=SymphonySecurityDomain:add( \
+        security-domain=fsSD \
+    )
+end-if
 
 reload
  

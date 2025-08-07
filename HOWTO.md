@@ -33,3 +33,17 @@ sh deploy-backend.sh
 
 cd frontend
 PROXY_TARGET=local ng serve --host 0.0.0.0
+
+curl -i -k -X Post http://localhost:8080/symphony-ws/service/login -H "Content-Type: application/json" -d '{"username":"admin","password":"admin"}'
+
+curl -i -k -X Post http://localhost:8080/symphony-ws/service/login -H "Content-Type: application/json" -d '{"username":"user","password":"user"}'
+
+curl -i -k -X Post http://localhost:8080/symphony-ws/service/login -H "Content-Type: application/json" -d '{"username":"user","password":"us3er"}'
+
+/subsystem=undertow/server=default-server/host=default-host/setting=access-log:add( \
+ directory=access-logs, \
+ prefix=access_log, \
+ suffix=.log, \
+ pattern="%h %l %u %t \"%r\" %s %b \"%{i,Referer}\" \"%{i,User-Agent}\"", \
+ rotate=true \
+)
