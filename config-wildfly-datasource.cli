@@ -1,0 +1,28 @@
+
+batch
+
+# --- Add JDBC driver 
+if (outcome != success) of /subsystem=datasources/jdbc-driver=postgresql:read-resource 
+    /subsystem=datasources/jdbc-driver=postgresql:add( \
+        driver-name=postgresql, \
+        driver-module-name=org.postgresql, \
+        driver-class-name=org.postgresql.Driver \ 
+    ) 
+end-if 
+
+# --- Configure SymphonyDS datasource 
+if (outcome != success) of /subsystem=datasources/data-source=SymphonyDS:read-resource 
+    /subsystem=datasources/data-source=SymphonyDS:add( \
+        jndi-name=java:/SymphonyDS, \
+        driver-name=postgresql, \
+        connection-url="jdbc:postgresql://db:5432/symphony", \
+        user-name=symphony, \
+        password=symphony, \
+        enabled=true \
+    ) 
+end-if 
+ 
+run-batch
+
+
+reload
