@@ -9,7 +9,7 @@
         <param-value>format</param-value>
     </context-param>
 
-     <login-config>
+    <login-config>
         <auth-method>BASIC</auth-method>
     </login-config>
  
