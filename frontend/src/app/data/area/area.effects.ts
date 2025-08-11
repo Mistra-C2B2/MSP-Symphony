@@ -224,7 +224,7 @@ function flattenAreaGroups(nationalArea: NationalArea, language: string): Nation
   return {
     ...nationalArea,
     displayName: nationalArea[language] as string ?? nationalArea['en'],
-    groups: nationalArea.groups.reduce(
+    groups: nationalArea.groups?.reduce(
       (groupMap, group) => ({
         ...groupMap,
         [group.en]: {
@@ -236,12 +236,12 @@ function flattenAreaGroups(nationalArea: NationalArea, language: string): Nation
         }
       }),
       {}
-    )
+    ) || {}
   };
 }
 
 function flattenAreas(areas: Area[], parentPath: StatePath): Areas {
-  return areas.reduce((prevAreas, area) => {
+  return areas?.reduce((prevAreas, area) => {
     const statePath = [...parentPath, 'areas', area.name];
     const displayName = area.name + (typeof area.code === 'string' ? ` (${area.code})` : '');
     return {
@@ -260,7 +260,7 @@ function flattenAreas(areas: Area[], parentPath: StatePath): Areas {
         )
       }
     };
-  }, {});
+  }, {}) || {};
 }
 
 export function createFeature(

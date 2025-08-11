@@ -228,8 +228,14 @@ class AreaLayer extends VectorLayer<Feature> {
 
   private addRightClickInteraction(map: OLMap) {
     let path = '';
+    const optionsMenuElement = document.getElementById('area-options-menu');
+    
+    if (!optionsMenuElement) {
+      console.warn('area-options-menu element not found in DOM yet');
+      return; // Exit early if element is not available
+    }
+    
     const
-      optionsMenuElement = document.getElementById('area-options-menu')!,
       removeOptionsMenu = () => {
         this.optionsMenuActive = false;
         map.getOverlayById('areaOptionsMenu')?.setPosition(undefined);

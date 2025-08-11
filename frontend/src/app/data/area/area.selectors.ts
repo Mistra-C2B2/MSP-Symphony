@@ -34,10 +34,10 @@ export const selectNationalAreas = createSelector(selectAreaState, (state: State
     .map(areaType => area[areaType])
     .map(nationalArea => ({
       ...nationalArea,
-      groups: Object.values(nationalArea.groups).map(group => ({
+      groups: nationalArea.groups ? Object.values(nationalArea.groups).map(group => ({
         ...group,
-        areas: Object.values(group.areas)
-      }))
+        areas: group.areas ? Object.values(group.areas) : []
+      })) : []
     }));
 });
 
@@ -175,7 +175,7 @@ function createBoundaryFeature(boundaries: Boundary[]): FeatureCollection {
         name: 'urn:ogc:def:crs:OGC:1.3:CRS84'
       }
     },
-    features: boundaries.map(({ name, polygon: geometry }) => ({
+    features: boundaries?.map(({ name, polygon: geometry }) => ({
       type: 'Feature',
       properties: {
         name,
@@ -184,6 +184,6 @@ function createBoundaryFeature(boundaries: Boundary[]): FeatureCollection {
         statePath: []
       },
       geometry
-    }))
+    })) || []
   };
 }
