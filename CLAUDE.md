@@ -39,10 +39,11 @@ ng test --watch=false --browsers=ChromeCI  # Headless test run
 ng lint                         # ESLint checking
 ```
 
-### Docker Development
-```bash
-docker-compose up --build       # Run full stack (db, backend, frontend)
-```
+### Development Environment
+The application runs in a devcontainer environment with services accessible at:
+- Database: postgresql://db:5432/symphony (user: symphony, password: symphony)
+- Backend: localhost:8080
+- Frontend: localhost:4200
 
 ## Testing
 

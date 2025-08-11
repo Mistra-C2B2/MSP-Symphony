@@ -15,7 +15,8 @@ RUN apt-get update && sudo apt-get install -y \
     libxext6 \
     libxrender1 \
     libxtst6 \
-    libxi6
+    libxi6 \
+    postgresql-client
 
 # Install Maven 3.9.9
 RUN curl -fsSL https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
@@ -40,7 +41,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && rm -rf /var/lib/apt/lists/*
 
 # Expose ports
-EXPOSE 8080 9990 4200
+EXPOSE 8080 9990 4200 5432
 
 # # Copy the WildFly configuration script
 # COPY ../config-wildfly.cli /opt/config-wildfly.cli
@@ -49,5 +50,5 @@ EXPOSE 8080 9990 4200
 # COPY ../../start-wildfly.sh /opt/start-wildfly.sh
 # RUN chmod +x /opt/start-wildfly.sh
 
-#CMD ["/opt/start-wildfly.sh"] 
+#CMD ["../../start-wildfly.sh"] 
 CMD ["/bin/bash","-c","sleep infinity"]
