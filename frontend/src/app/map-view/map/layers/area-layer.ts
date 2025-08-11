@@ -159,9 +159,16 @@ class AreaLayer extends VectorLayer<Feature> {
   }
 
   private async addHoverInteraction(map: OLMap, areaLayer: VectorLayer<Feature>) {
-    const container = document.getElementById('popup') as HTMLElement;
-    const content = document.getElementById('popup-title') as HTMLElement;
-    const body = document.getElementById('popup-body') as HTMLElement;
+    const container = document.getElementById('popup');
+    const content = document.getElementById('popup-title');
+    const body = document.getElementById('popup-body');
+    
+    // If popup elements don't exist yet (e.g., when drawIsActive is true), skip setup
+    if (!container || !content || !body) {
+      console.warn('Popup elements not available, hover interaction will be set up later');
+      return;
+    }
+    
     const overlay = new Overlay({
       id: 'hoverInfo',
       element: container,
@@ -369,6 +376,11 @@ class AreaLayer extends VectorLayer<Feature> {
   deselectAreas() {
     this.areaSelect.getFeatures().clear();
     this.setSelection(undefined, false);
+  }
+
+  // Method to set up hover interaction when popup elements become available
+  public initializeHoverInteraction() {
+    this.addHoverInteraction(this.map, this);
   }
 }
 

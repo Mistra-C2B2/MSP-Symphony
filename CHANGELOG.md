@@ -35,6 +35,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prevents `"can't access property 'addEventListener', optionsMenuElement is null"` errors
   - Files: `frontend/src/app/map-view/map/layers/area-layer.ts`
 
+- **Fixed hover popup initialization timing issues**
+  - Fixed `"can't access property 'innerHTML', content is null"` error when hovering over map features
+  - Added null checks for popup elements (`popup-title`, `popup-body`) during hover interaction setup
+  - Implemented deferred hover interaction initialization when popup elements become available
+  - Added `initializeHoverInteraction()` method for proper timing control
+  - Enhanced drawing mode toggle to reinitialize hover popups when exiting drawing mode
+  - Files: `frontend/src/app/map-view/map/layers/area-layer.ts`, `frontend/src/app/map-view/map/map.component.ts`
+
 #### Backend Data & API Issues
 
 - **Fixed empty API responses due to browser caching**

@@ -272,6 +272,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.map!.addLayer(this.areaLayer);
     this.map!.addLayer(this.scenarioLayer);
     this.map!.addLayer(this.areaHighlightLayer);
+
+    // Initialize hover interaction once the view is ready and popup elements are available
+    // Use setTimeout to ensure Angular has finished rendering the template
+    setTimeout(() => {
+      if (!this.drawIsActive) {
+        this.areaLayer.initializeHoverInteraction();
+      }
+    }, 0);
   }
 
   public clearResult() {
@@ -339,6 +347,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   toggleDrawInteraction = () => {
     this.drawIsActive = this.areaLayer.toggleDrawInteraction();
+    
+    // Set up hover interaction when popup elements become available (drawIsActive = false)
+    if (!this.drawIsActive) {
+      // Use setTimeout to ensure Angular has finished rendering the template
+      setTimeout(() => {
+        this.areaLayer.initializeHoverInteraction();
+      }, 0);
+    }
   };
 
   onDrawInvalid = async () => {
