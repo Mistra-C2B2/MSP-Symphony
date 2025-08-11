@@ -214,7 +214,8 @@ CREATE TABLE IF NOT EXISTS symphony.nationalarea (
 CREATE TABLE IF NOT EXISTS symphony.capolygon (
     cap_id integer PRIMARY KEY DEFAULT nextval('symphony.cap_seq'),
     cap_carea_id integer NOT NULL REFERENCES symphony.calculationarea(carea_id) ON DELETE CASCADE,
-    cap_polygon jsonb NOT NULL
+    cap_polygon jsonb NOT NULL,
+    pg_polygon geometry(MultiPolygon,4326)
 );
 
 -- Create system properties table
