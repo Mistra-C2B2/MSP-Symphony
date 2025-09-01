@@ -28,7 +28,7 @@ By default the username is set to `symphony` in the scripts.
 Two setup scripts are enclosed in the [sql](./sql) directory relative to this instruction. 
 
 If Hibernate's *hbm2ddl.auto* feature is activated to instantiate the schema at startup, the database structure itself needs to be adjusted <u>after</u> being initialized, <u>before</u> the API sees any usage, to avoid runtime errors.  
-Regrettably, this apparent deficiency is not as yet mitigated in the software (although most of the discrepancies have been documented, however obliquely, in the *Database schema changes* section of the release notes).  
+Regrettably, this apparent deficiency is not as yet remedied in the software (although most of the discrepancies have been documented, however obliquely, in the *Database schema changes* section of the release notes).  
 Because of this, instead of relying on the (in this case hardly applicable) Hibernate feature, a schema creation procedure is included in the sql directory.
 
 > [!TIP]

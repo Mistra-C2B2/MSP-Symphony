@@ -3,7 +3,7 @@
 -- Run this script only if you've utilized Hibernates' "hbm2ddl.auto" feature to create the database model from the Entity definitions in the app deployment phase. 
 -- Unfortunately, hbm2ddl.auto isn't 100% applicable in MSP-Symphony's case and will by default result in discrepancies.
 
--- These discrepancies may be mitigated by this script. 
+-- These discrepancies are effectively remedied by this script. 
 
 DO $$
 DECLARE
