@@ -206,8 +206,8 @@ CREATE TABLE IF NOT EXISTS symphony.nationalarea (
     narea_id integer PRIMARY KEY DEFAULT nextval('symphony.narea_seq'),
     narea_countryiso3 text NOT NULL,
     narea_type text NOT NULL,
-    narea_areas jsonb,
-    narea_types jsonb
+    narea_areas text NOT NULL,
+    narea_types text
 );
 
 -- Create calculation area polygon table (production schema)
@@ -590,8 +590,8 @@ BEGIN
         ), 3035
     ) INTO geom;
     
-    INSERT INTO symphony.nationalareas (narea_name, narea_geometry, narea_type_id)
-    VALUES ('Lysekil Test Area', geom, (SELECT atype_id FROM symphony.areatype WHERE atype_name = 'Test Areas'))
+    INSERT INTO symphony.nationalarea (narea_countryiso3, narea_type, narea_areas)
+    VALUES ('SWE', 'Test Areas', '{"areas":[{"name":"Lysekil Test Area","geometry":"POLYGON((11.4 58.2,11.6 58.2,11.6 58.5,11.4 58.5,11.4 58.2))"}]}')
     RETURNING narea_id INTO area_id;
     
     RAISE NOTICE 'Imported test area with ID: %', area_id;
@@ -630,7 +630,7 @@ verify_installation() {
     local baseline_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -t -c "SELECT COUNT(*) FROM symphony.baselineversion;" | tr -d ' ')
     local band_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -t -c "SELECT COUNT(*) FROM symphony.meta_bands;" | tr -d ' ')
     local matrix_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -t -c "SELECT COUNT(*) FROM symphony.sensitivitymatrix;" | tr -d ' ')
-    local areas_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -t -c "SELECT COUNT(*) FROM symphony.nationalareas;" | tr -d ' ')
+    local areas_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -t -c "SELECT COUNT(*) FROM symphony.nationalarea;" | tr -d ' ')
     
     log_info "Installation verification:"
     log_info "  Baseline versions: $baseline_count"

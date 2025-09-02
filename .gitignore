@@ -27,3 +27,4 @@ target
 data
 cookies.txt
 *.log
+.claude
