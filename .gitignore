@@ -22,3 +22,6 @@ target
 .history/*
 *.code-workspace
 *.war
+
+# Misc
+.claude
