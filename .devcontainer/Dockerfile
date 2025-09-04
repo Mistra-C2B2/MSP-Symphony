@@ -55,14 +55,7 @@ RUN echo "Cleaning up zip files..."
 RUN rm /data/MSP-Symphony_sv_Baseline2019.zip
 
 # Create 'cache' directory
-RUN mkdir -p /var/cache/symphony/data
-
-# If vscode exists, change its UID to 0 (root privileges)
-RUN if id "vscode" &>/dev/null; then \
-      usermod -u 0 -o vscode; \
-    else \
-      useradd -m -u 0 -o -g 0 vscode; \
-    fi
+RUN mkdir -p /home/vscode/symphony/cache
 
 # Override symphony-global.properties
 RUN mkdir -p /app/config/symphony
