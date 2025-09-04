@@ -41,7 +41,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && npm install -g @angular/cli \
     && rm -rf /var/lib/apt/lists/*
 
-# Create data directory if it doesn't exist
+# Create 'data' directory
 RUN mkdir -p /data
 
 # Download and unpack the zip files
@@ -53,6 +53,9 @@ RUN unzip -o /data/MSP-Symphony_sv_Baseline2019.zip -d /data/
 
 RUN echo "Cleaning up zip files..."
 RUN rm /data/MSP-Symphony_sv_Baseline2019.zip
+
+# Create 'cache' directory
+RUN mkdir -p /var/cache/symphony/data
 
 # If vscode exists, change its UID to 0 (root privileges)
 RUN if id "vscode" &>/dev/null; then \
