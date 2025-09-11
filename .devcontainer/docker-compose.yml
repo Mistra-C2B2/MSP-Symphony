@@ -3,10 +3,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - JAVA_OPTS=-Xmx10G -Xms2G
     volumes:
       - ..:/workspace:cached
-      - ~/.gitconfig:/root/.gitconfig
-      - ~/.ssh:/root/.ssh:ro
+      - ~/.gitconfig:/vscode/.gitconfig
+      - ~/.ssh:/vscode/.ssh:ro
     ports:
       - "8080:8080"
       - "9990:9990"
