@@ -76,6 +76,9 @@ organizational needs.
 
 5. **Access the application**
    - Navigate to: https://127.0.0.1:4200
+   - Login with the credentials:
+     - username: user
+     - password: user
 
 ### SSL Certificate Note
 
