@@ -165,7 +165,7 @@ The system has only been tested in Wildfly and its standalone mode, using the `s
 least two things need be added to the stock Wildfly configuration:
 
 1. A _SymphonyDS_ data source
-2. A security domain. By default, the security domain is called _LDAPAuth_ in the `jboss-web.xml` file.
+2. A security domain. By default, the security domain is called _other_ in the `jboss-web.xml` file.
 
 In the case of Wildfly, the data source may be added through the Wildfly CLI, through the web-based management
 console, or directly in the configuration file as the below XML fragment:
