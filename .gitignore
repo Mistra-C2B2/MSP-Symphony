@@ -22,7 +22,3 @@ target
 .history/*
 *.code-workspace
 *.war
-
-# Misc
-.claude
-CLAUDE.md
