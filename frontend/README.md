@@ -7,12 +7,12 @@ Install Angular CLI globally `npm install -g @angular/cli`. Run `npm install` to
 ## Development server
 
 Run `ng serve --ssl` (or `npm start`) for a dev server. Navigate to [https://localhost:4200/](https://localhost:4200/). The app will automatically reload if you change any of the source files.
- 
+
 There is a possibility of pointing the dev server frontend code to various backend configurations by setting a `PROXY_TARGET` environment variable. See the file `proxy.conf.json` for more information.
 
 ### Local SSL certificate
 
-To avoid browser complaints of bad SSL certificate (and make autocomplete work in login form when using devserver) you can generate your own certificate using `ng run generate-cert`. Make sure you also tell your machine to trust it as a root certificate.
+To avoid browser complaints of bad SSL certificate (and make autocomplete work in login form when using devserver) you can generate your own certificate using `npm run generate-cert`. Make sure you also tell your machine to trust it as a root certificate.
 
 ## Code scaffolding
 
@@ -36,5 +36,6 @@ The file `attributions.ts` contains a list of 3rd-party components. The informat
 about-dialog. The list (in particular the version numbers) needs to be kept up to date.
 
 ## Good ideas for improvement in frontend:
+
 - Enable strict template checking (strictTemplates = true in tsconfig)
 - Migrate from ngx-translate to Angular's standard i18n framework

@@ -1,0 +1,45 @@
+name: Test
+
+on:
+  push:
+    branches: ["develop"]
+  pull_request:
+    branches: ["develop"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Start services
+        run: docker compose -f .devcontainer/docker-compose.yml up -d
+
+      - name: Wait for services to be ready
+        run: |
+          sleep 10
+
+      - name: Start Wildfly
+        run: |
+          docker compose -f .devcontainer/docker-compose.yml exec -T dev start-wildfly.sh
+          sleep 10
+
+      - name: Deploy backend
+        run: |
+          docker compose -f .devcontainer/docker-compose.yml exec -T dev deploy-backend.sh
+          sleep 5
+
+      - name: Run backend tests
+        run: |
+          docker compose -f .devcontainer/docker-compose.yml exec -T dev pwd
+          docker compose -f .devcontainer/docker-compose.yml exec -T dev ls -la
+          docker compose -f .devcontainer/docker-compose.yml exec -T dev bash -c "cd workspace/symphony-ws && mvn test"
+
+      - name: Stop services
+        run: |
+          docker compose -f .devcontainer/docker-compose.yml down
+        if: always()
