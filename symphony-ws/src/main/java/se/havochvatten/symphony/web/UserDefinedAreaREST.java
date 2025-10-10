@@ -34,7 +34,7 @@ import static se.havochvatten.symphony.web.WebUtil.noPrincipalStr;
 @Tag(name = "/userdefinedarea")
 @Path("userdefinedarea")
 public class UserDefinedAreaREST {
-    private static final Logger LOG = Logger.getLogger(UserREST.class.getName());
+    private static final Logger LOG = Logger.getLogger(UserDefinedAreaREST.class.getName());
     private static final java.nio.file.Path TEMP_DIR = Paths.get(System.getProperty("java.io.tmpdir"));
 
     @EJB
