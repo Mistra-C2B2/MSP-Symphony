@@ -29,13 +29,11 @@ export default class AreaService {
   }
 
   uploadUserArea(areaType: string, formData: FormData) {
-    console.log("Frontend, uploadUserArea; url: " + `${BASE_URL}/${areaType}/import`)
     return this.http.post<AreaInterfaces.UploadedUserDefinedArea>(`${BASE_URL}/${areaType}/import`,
       formData);
   }
 
   confirmUserAreaImport(areaType: string, key: string) {
-    console.log("Frontend, , confirmUserAreaImport; key: " + key + ", areaType: " + areaType)
     return this.http.put<AreaInterfaces.AreaImport>(`${BASE_URL}/${areaType}/import/${key}`, null);
   }
 
