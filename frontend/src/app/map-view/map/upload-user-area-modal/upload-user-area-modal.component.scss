@@ -27,6 +27,15 @@
     border: 1px solid $hav-darkwarmgrey;
   }
 
+  select {
+    font-size: 1.6rem;
+    height: 45px;
+  }
+
+  label {
+    font-size: 1.6rem;
+  }
+
   .loading {
     text-align: center;
     padding: 1rem 0;
