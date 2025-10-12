@@ -1,0 +1,46 @@
+<div class="layer-manager">
+  <h3>Layer Manager</h3>
+
+  <div
+    cdkDropList
+    (cdkDropListDropped)="drop($event)"
+    class="layer-list"
+  >
+    <div
+      class="layer-item"
+      *ngFor="let layer of layers"
+      cdkDrag
+    >
+      <span class="drag-handle" cdkDragHandle title="Reorder layer">☰</span>
+
+      <input
+        type="checkbox"
+        [checked]="layer.visible"
+        (change)="toggleLayer(layer)"
+      />
+
+      
+      <span class="layer-name">{{ layer.name }}</span>
+
+      
+      <input
+        class="opacity-slider"
+        type="range"
+        min="0"
+        max="100"
+        [value]="(layer.opacity ?? 1) * 100"
+        (input)="changeOpacity(layer, $event.target.value)"
+        title="Adjust opacity"
+      />
+
+    
+      <button
+        class="remove-btn"
+        title="Remove layer"
+        (click)="removeLayer(layer)"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+</div>

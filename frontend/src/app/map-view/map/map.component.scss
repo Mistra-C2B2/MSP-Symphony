@@ -6,9 +6,22 @@
   background: $hav-darkcoldgrey;
   position: relative;
   height: calc(100vh - #{$header-height});
+  width: 100%;
+  display: block;
+  overflow: hidden;
 
+  /* 🔹 Fix 1: ensure the map always fills the available area */
   #map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
     height: 100%;
+    z-index: 0; /* base layer sits behind everything else */
+    background: #dfe6ed; /* light fallback color if tiles fail */
+
     -moz-user-select: all;
     -webkit-user-select: all;
     -ms-user-select: all;
@@ -23,27 +36,100 @@
     }
   }
 
+  /* 🔹 Map Toolbar: stays above everything */
   app-map-toolbar {
     position: absolute;
     top: 2rem;
     right: 0.8rem;
+    z-index: 2100;
   }
 
+  /* 🔹 Layer Manager (side panel) */
+  app-layer-manager {
+    position: absolute;
+    top: 9rem;
+    right: 2rem;
+    z-index: 2000;
+    width: 200px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    padding: 1rem 1.2rem;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.3rem;
+    color: #333;
+
+    /* 🔹 Fix 2: prevent empty white header box (previously caused by stray <h3>) */
+    h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.6rem;
+      text-align: center;
+      color: #444;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        label {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          cursor: pointer;
+        }
+
+        input[type='range'] {
+          width: 80px;
+          accent-color: $hav-turquoise;
+        }
+
+        button.remove-btn {
+          background: none;
+          border: none;
+          color: #c33;
+          cursor: pointer;
+          font-size: 1.4rem;
+          line-height: 1;
+          padding: 0;
+
+          &:hover {
+            color: darkred;
+          }
+        }
+      }
+    }
+  }
+
+  /* 🔹 OpenLayers popup styling */
   .ol-popup {
     position: absolute;
     background-color: white;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     padding: 10px;
     border-radius: 4px;
     border: 1px solid #cccccc;
     top: -23px;
     left: 22px;
     min-width: 240px;
+    z-index: 2500;
 
-    &:after, &:before {
+    &:after,
+    &:before {
       top: 12px;
       border: solid transparent;
-      content: " ";
+      content: '';
       height: 0;
       width: 0;
       position: absolute;
@@ -79,13 +165,24 @@
     }
   }
 
+  /* 🔹 Area options menu bottom right */
   #area-options-menu {
     background-color: white;
     font-size: 1.3rem;
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    z-index: 2100;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 
     button {
       padding: 0.7rem 0.6rem;
       margin: 0.3rem;
+      border: none;
+      border-radius: 4px;
+      background: #f9f9f9;
+      cursor: pointer;
 
       &:hover {
         background-color: $hav-lightturquoise;

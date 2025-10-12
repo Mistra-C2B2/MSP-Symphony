@@ -26,6 +26,10 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatButtonModule } from "@angular/material/button";
 import { MatRadioModule } from "@angular/material/radio";
 
+
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatSliderModule } from '@angular/material/slider';
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -36,6 +40,8 @@ import { MatRadioModule } from "@angular/material/radio";
     MatCheckboxModule,
     MatButtonModule,
     MatRadioModule,
+    DragDropModule,
+    MatSliderModule,
     SharedModule,
     CoreModule,
     MapViewModule,
