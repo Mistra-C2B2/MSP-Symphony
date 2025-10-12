@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteException;
 import se.havochvatten.symphony.dto.AreaImportResponse;
-import se.havochvatten.symphony.dto.UploadedUserDefinedAreaDto;
+import se.havochvatten.symphony.dto.UploadedAreaDto;
 import se.havochvatten.symphony.dto.UserDefinedAreaDto;
 import se.havochvatten.symphony.entity.UserDefinedArea;
 import se.havochvatten.symphony.exception.SymphonyModelErrorCode;
@@ -97,7 +97,7 @@ public class UserDefinedAreaService {
     /**
      * @return The dto, or empty if inspection failed
      */
-    public UploadedUserDefinedAreaDto inspectGeoPackage(File file) throws SymphonyStandardAppException {
+    public UploadedAreaDto inspectGeoPackage(File file) throws SymphonyStandardAppException {
         // https://docs.geotools.org/latest/userguide/library/data/geopackage.html
         try (GeoPackage pkg = new GeoPackage(file)) {
             var features = pkg.features();
@@ -116,7 +116,7 @@ public class UserDefinedAreaService {
 
                 if (!featureIdentifiers.isEmpty()) {
                     var srid = features.get(0).getSrid();
-                    return new UploadedUserDefinedAreaDto(featureIdentifiers, srid, file.getName());
+                    return new UploadedAreaDto(featureIdentifiers, srid, file.getName());
                 } else {
                     throw new SymphonyStandardAppException(SymphonyModelErrorCode.GEOPACKAGE_MISSING_GEOMETRY);
                 }

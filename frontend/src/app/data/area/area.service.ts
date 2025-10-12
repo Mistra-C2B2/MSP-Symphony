@@ -29,7 +29,7 @@ export default class AreaService {
   }
 
   uploadUserArea(areaType: string, formData: FormData) {
-    return this.http.post<AreaInterfaces.UploadedUserDefinedArea>(`${BASE_URL}/${areaType}/import`,
+    return this.http.post<AreaInterfaces.UploadedArea>(`${BASE_URL}/${areaType}/import`,
       formData);
   }
 

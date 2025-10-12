@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DialogRef } from '@shared/dialog/dialog-ref';
 import AreaService from "@data/area/area.service";
 import { DialogConfig } from "@shared/dialog/dialog-config";
-import { UploadedUserDefinedArea } from "@data/area/area.interfaces";
+import { UploadedArea } from "@data/area/area.interfaces";
 import { Store } from "@ngrx/store";
 import { State } from "@src/app/app-reducer";
 import { AreaActions } from "@data/area";
@@ -22,7 +22,7 @@ export class UploadUserAreaModalComponent {
 
   // Component state variables
   loading = false;
-  uploadedArea?: UploadedUserDefinedArea;
+  uploadedArea?: UploadedArea;
   firstFeatureId?: string;
   inspectionError?: ServerError;
 
