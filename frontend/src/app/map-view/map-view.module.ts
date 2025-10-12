@@ -23,9 +23,7 @@ import { CalculationHistoryComponent } from './calculation-history/calculation-h
 import { ComparisonComponent } from './comparison/comparison.component';
 import { CreateUserAreaModalComponent } from './map/create-user-area-modal/create-user-area-modal.component';
 import { CheckboxAccordionComponent } from './band-selection/checkbox-accordion/checkbox-accordion.component';
-import {
-  MatrixTableComponent
-} from './scenario/scenario-area-detail/matrix-selection/matrix-table/matrix-table.component';
+import { MatrixTableComponent } from './scenario/scenario-area-detail/matrix-selection/matrix-table/matrix-table.component';
 import { FormsModule } from "@angular/forms";
 import { UploadUserAreaModalComponent } from "@src/app/map-view/map/upload-user-area-modal/upload-user-area-modal.component";
 import { ScenarioEditorModule } from "@src/app/map-view/scenario/scenario-editor.module";
@@ -41,6 +39,8 @@ import { ConfirmGenerateComparisonComponent } from './calculation-history/confir
 import { CompoundComparisonListDialogComponent } from '@src/app/map-view/compound-comparison-list-dialog/compound-comparison-list-dialog.component';
 import { DownloadCompoundComparisonDialogComponent } from './compound-comparison-list-dialog/download-compound-comparison-dialog/download-compound-comparison-dialog.component';
 import { ReliabilityLegendComponent } from "@src/app/map-view/reliability-legend/reliability-legend.component";
+
+import { LayerManagerComponent } from './layer-manager/layer-manager.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +71,8 @@ import { ReliabilityLegendComponent } from "@src/app/map-view/reliability-legend
     ConfirmGenerateComparisonComponent,
     CompoundComparisonListDialogComponent,
     DownloadCompoundComparisonDialogComponent,
-    ReliabilityLegendComponent
+    ReliabilityLegendComponent,
+    LayerManagerComponent
   ],
   imports: [
     SharedModule,
