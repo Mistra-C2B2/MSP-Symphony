@@ -2,6 +2,12 @@
 <p [innerHTML]="'map.user-area.upload.modal.fileformat-note' | translate"></p>
 
 <!--FIXME replace with custom "polygon" icon -->
+<label for="category">Type of area</label>
+<select id="category" name="category" (change)="onOptionSelect($event)">
+  <option value="calculationarea">Calculation area</option>
+  <option value="nationalarea">National area</option>
+  <option value="userdefinedarea" selected>User-defined area</option>
+</select>
 <input type="file" [accept]="requiredFileType" (change)="onFileSelect($event)" #fileUpload/>
 
 <div class="loading" *ngIf="loading">

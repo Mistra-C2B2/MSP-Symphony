@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DialogRef } from '@shared/dialog/dialog-ref';
 import AreaService from "@data/area/area.service";
 import { DialogConfig } from "@shared/dialog/dialog-config";
-import { UploadedUserDefinedArea } from "@data/area/area.interfaces";
+import { UploadedArea } from "@data/area/area.interfaces";
 import { Store } from "@ngrx/store";
 import { State } from "@src/app/app-reducer";
 import { AreaActions } from "@data/area";
@@ -18,10 +18,11 @@ import { ServerError } from "@data/message/message.interfaces";
 export class UploadUserAreaModalComponent {
   readonly requiredFileType: string;
   errorIcon = faExclamationCircle;
+  areaType = 'userdefinedarea';
 
   // Component state variables
   loading = false;
-  uploadedArea?: UploadedUserDefinedArea;
+  uploadedArea?: UploadedArea;
   firstFeatureId?: string;
   inspectionError?: ServerError;
 
@@ -44,7 +45,7 @@ export class UploadUserAreaModalComponent {
       formdata.append("package", file);
       // TODO: Handle failed inspection
 
-      this.areaService.uploadUserArea(formdata).pipe(
+      this.areaService.uploadUserArea(this.areaType, formdata).pipe(
         finalize(() => this.loading = false)
       ).subscribe(inspectionResults => {
           this.uploadedArea = inspectionResults
@@ -60,6 +61,11 @@ export class UploadUserAreaModalComponent {
     }
   }
 
+  onOptionSelect(event: Event) {
+    this.clearState();
+    this.areaType = (event.target as HTMLInputElement).value
+  }
+
   get hasWGS84SRID() {
     return this.uploadedArea && this.uploadedArea.srid !== 4326;
   }
@@ -69,7 +75,7 @@ export class UploadUserAreaModalComponent {
   }
 
   confirmImport() {
-    this.areaService.confirmUserAreaImport(this.uploadedArea!.key)
+    this.areaService.confirmUserAreaImport(this.areaType, this.uploadedArea!.key)
       .subscribe(
       importedArea => this.dialog.close(importedArea),
       ({ status, error: message }) => {

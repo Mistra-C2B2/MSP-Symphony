@@ -2,101 +2,72 @@ package se.havochvatten.symphony.web;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.io.IOUtils;
+import org.geotools.geopkg.GeoPackage;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import se.havochvatten.symphony.dto.AreaImportResponse;
-import se.havochvatten.symphony.dto.CalculationAreaDto;
-import se.havochvatten.symphony.entity.CalculationArea;
+import se.havochvatten.symphony.dto.UserDefinedAreaDto;
 import se.havochvatten.symphony.exception.SymphonyModelErrorCode;
 import se.havochvatten.symphony.exception.SymphonyStandardAppException;
-import se.havochvatten.symphony.mapper.CalculationAreaMapper;
-import se.havochvatten.symphony.service.CalculationAreaService;
-
+import se.havochvatten.symphony.service.UserDefinedAreaService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.MultivaluedMap;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriInfo;
-
+import jakarta.ws.rs.core.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
-import org.geotools.geopkg.GeoPackage;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import static se.havochvatten.symphony.web.WebUtil.noPrincipalStr;
 
 @Stateless
-@Tag(name = "/calculationarea")
-@Path("calculationarea")
-@RolesAllowed("GRP_SYMPHONY")
-public class CalculationAreaREST {
-    private static final Logger LOG = Logger.getLogger(CalculationAreaREST.class.getName());
+@Tag(name = "/userdefinedarea")
+@Path("userdefinedarea")
+public class UserDefinedAreaREST {
+    private static final Logger LOG = Logger.getLogger(UserDefinedAreaREST.class.getName());
     private static final java.nio.file.Path TEMP_DIR = Paths.get(System.getProperty("java.io.tmpdir"));
 
     @EJB
-    CalculationAreaService calculationAreaService;
+    UserDefinedAreaService userDefinedAreaService;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Get all calculation areas for baselineName defined in the system")
-    @Path("all/{baselineName}")
-    public Response findCalculationAreas(@PathParam("baselineName") String baselineName) {
-        List<CalculationArea> resp = calculationAreaService.findCalculationAreas(baselineName);
-        if (resp != null) {
-            return Response.ok(resp
-                            .stream()
-                            .map(CalculationAreaMapper::mapToDto)
-                            .toList())
-                    .build();
-        } else
-            return Response.noContent().build();
-    }
+    @Path("/all")
+    @Operation(summary = "List all user defined areas belonging to logged in user")
+    @Produces({MediaType.APPLICATION_JSON}) // GeoJSON polygons
+    @RolesAllowed("GRP_SYMPHONY")
+    public Response findAllByOwner(@Context HttpServletRequest req) throws SymphonyStandardAppException {
+        if (req.getUserPrincipal() == null)
+            throw new NotAuthorizedException(noPrincipalStr);
 
-    @GET
-    @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Get calculation area on id")
-    public Response get(@PathParam("id") Integer id) throws SymphonyStandardAppException {
-        CalculationAreaDto calculationAreaDto = calculationAreaService.get(id);
-        return Response.ok(calculationAreaDto).build();
-    }
-
-    @GET
-    @Path("calibrated/{baselineName}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Get all calculation areas for baselineName defined in the system " +
-                          "for which a max value has been set")
-    public Response findCalibratedCalculationAreas(@PathParam("baselineName") String baselineName) {
-        List<CalculationArea> resp = calculationAreaService.findCalibratedCalculationAreas(baselineName);
-
-        if (resp != null) {
-            return Response.ok(resp
-                            .stream()
-                            .map(CalculationAreaMapper::mapToSparseDto)
-                            .toList())
-                    .build();
-        } else
-            return Response.noContent().build();
+        List<UserDefinedAreaDto> userDefinedAreas =
+                userDefinedAreaService.findAllUserDefinedAreasByOwner(req.getUserPrincipal());
+        return Response.ok(userDefinedAreas).build();
     }
 
     @POST
+    @Operation(summary = "Create new user defined area - GeoJSON polygons")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Create a CalculationArea")
-    public Response create(@Context UriInfo uriInfo, CalculationAreaDto calculationAreaDto) throws SymphonyStandardAppException {
-        calculationAreaDto = calculationAreaService.create(calculationAreaDto);
-        URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(calculationAreaDto.getId())).build();
-        return Response.created(uri).entity(calculationAreaDto).build();
+    @RolesAllowed("GRP_SYMPHONY")
+    public Response createUserDefinedArea(@Context HttpServletRequest req, @Context UriInfo uriInfo,
+                                          UserDefinedAreaDto userDefinedAreaDto) throws SymphonyStandardAppException {
+        if (req.getUserPrincipal() == null)
+            throw new NotAuthorizedException(noPrincipalStr);
+
+        userDefinedAreaDto = userDefinedAreaService.createUserDefinedArea(req.getUserPrincipal(),
+                userDefinedAreaDto);
+        URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(userDefinedAreaDto.getId())).build();
+        return Response.created(uri).entity(userDefinedAreaDto).build();
     }
 
     @POST
@@ -104,7 +75,8 @@ public class CalculationAreaREST {
     @Operation(summary = "Submit a GeoPackage for inspection with intent to have it imported")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response uploadAndInspectCalculationArea(@Context HttpServletRequest req,
+    @RolesAllowed("GRP_SYMPHONY")
+    public Response uploadAndInspectUserDefinedArea(@Context HttpServletRequest req,
                                                     MultipartFormDataInput input)
         throws SymphonyStandardAppException, IOException {
 
@@ -133,7 +105,7 @@ public class CalculationAreaREST {
         }
 
         try {
-            var dto = calculationAreaService.inspectGeoPackage(packageFile);
+            var dto = userDefinedAreaService.inspectGeoPackage(packageFile);
             req.getSession().setAttribute(dto.key, packagePath.toFile());
             return Response.ok(dto).build();
         } catch (SymphonyStandardAppException|java.lang.reflect.UndeclaredThrowableException e) {
@@ -146,7 +118,8 @@ public class CalculationAreaREST {
     @Path("/import/{key}")
     @Operation(summary = "Confirm import of previously uploaded GeoPackage")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response actuallyImportCalculationArea(@Context HttpServletRequest req,
+    @RolesAllowed("GRP_SYMPHONY")
+    public Response actuallyImportUserDefinedArea(@Context HttpServletRequest req,
                                                   @Context UriInfo uriInfo,
                                                   @PathParam("key") String key)
         throws SymphonyStandardAppException {
@@ -156,8 +129,7 @@ public class CalculationAreaREST {
         try (var pkg = new GeoPackage(pkgFile)) {
             LOG.log(Level.INFO,
                 () -> String.format("Importing uploaded GeoPackage %s for user %s", pkgFile ,req.getUserPrincipal().getName()));
-                
-            response = calculationAreaService.importCalculationAreaFromPackage(req.getUserPrincipal(), pkg);
+            response = userDefinedAreaService.importUserDefinedAreaFromPackage(req.getUserPrincipal(), pkg);
         } catch (IOException e) {
             throw new SymphonyStandardAppException(SymphonyModelErrorCode.GEOPACKAGE_READ_FEATURE_FAILURE);
         }
@@ -188,22 +160,48 @@ public class CalculationAreaREST {
     }
 
     @PUT
-    @Path("{id}")
+    @Path("/{id}")
+    @Operation(summary = "Update user defined area - GeoJSON polygons")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Update CalculationArea")
-    public Response update(@PathParam("id") Integer id, CalculationAreaDto calculationAreaDto) throws SymphonyStandardAppException {
-        calculationAreaDto.setId(id);
-        calculationAreaDto = calculationAreaService.update(calculationAreaDto);
-        return Response.ok(calculationAreaDto).build();
+    @RolesAllowed("GRP_SYMPHONY")
+    public Response updateUserDefinedArea(@Context HttpServletRequest req, @PathParam("id") Integer id,
+                                          UserDefinedAreaDto userDefinedAreaDto) throws SymphonyStandardAppException {
+        if (req.getUserPrincipal() == null)
+            throw new NotAuthorizedException(noPrincipalStr);
+
+        userDefinedAreaDto = userDefinedAreaService.updateUserDefinedArea(req.getUserPrincipal(),
+                userDefinedAreaDto);
+        return Response.ok(userDefinedAreaDto).build();
     }
 
     @DELETE
-    @Path("{id}")
+    @Operation(summary = "Delete user defined area")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Delete CalculationArea")
-    public Response deleteCalcAreaSensMatrix(@PathParam("id") Integer id) throws SymphonyStandardAppException {
-        calculationAreaService.delete(id);
-        return Response.ok().build();
+    @RolesAllowed("GRP_SYMPHONY")
+    public Response deleteUserDefinedArea(@Context HttpServletRequest req, @PathParam("id") Integer id) throws SymphonyStandardAppException {
+        return deleteUserDefinedAreas(req, String.valueOf(id));
+    }
+
+    @DELETE
+    @Operation(summary = "Delete user defined area")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("GRP_SYMPHONY")
+    public Response deleteUserDefinedAreas(@Context HttpServletRequest req, @QueryParam("ids") String ids) throws SymphonyStandardAppException {
+        Principal principal = req.getUserPrincipal();
+
+        if (req.getUserPrincipal() == null)
+            throw new NotAuthorizedException(noPrincipalStr);
+
+        try {
+            int[] idArray = WebUtil.intArrayParam(ids);
+            for(int id : idArray) {
+                userDefinedAreaService.delete(principal, id);
+            }
+            return Response.noContent().build();
+        } catch (SymphonyStandardAppException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }
     }
 }

@@ -83,7 +83,7 @@ public abstract class RESTTest {
 
     public static BaselineVersion makeBaseline() {
         var baselineVersion = new BaselineVersion();
-        baselineVersion.setId(3);
+        baselineVersion.setId(4);
         baselineVersion.setName("test");
         baselineVersion.setDescription("test desc");
         baselineVersion.setValidFrom(new Date());

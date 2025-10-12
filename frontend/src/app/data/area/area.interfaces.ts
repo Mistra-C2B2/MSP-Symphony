@@ -119,7 +119,7 @@ export interface UserAreasState {
   [key: number]: UserArea;
 }
 
-export interface UploadedUserDefinedArea {
+export interface UploadedArea {
   srid: number;
   featureIdentifiers: string[];
   key: string;
